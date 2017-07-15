@@ -17,15 +17,18 @@ function refreshUsers(callback){
 
 function onClickDeleteButton(e){
     e.preventDefault();
+    lockBody();
     $("#loading").removeClass("is-hidden");
     var id = $(this).data("user-id");
     $.ajax("/api/users/"+id,{method:"DELETE"})
     .then(function(data){
         refreshUsers(function(){
-            $("#loading").addClass("is-hidden")
+            $("#loading").addClass("is-hidden");
+            unlockBody();
         })
     }).catch(function(){
-        $("#loading").addClass("is-hidden")
+        $("#loading").addClass("is-hidden");
+        unlockBody();
     });
 }
 
@@ -40,6 +43,7 @@ function onSubmitAddUser(e){
     $("#user-input-role").val("");
     $("#user-input-active").val("");
 
+    lockBody();
     $("#loading").removeClass("is-hidden");
     $.ajax("/api/users",{
         method:"POST",
@@ -47,16 +51,19 @@ function onSubmitAddUser(e){
         "contentType": "application/x-www-form-urlencoded"})
         .then(function(data){
             refreshUsers(function(){
-                $("#loading").addClass("is-hidden")
+                $("#loading").addClass("is-hidden");
+                unlockBody();
             })
         }).catch(function(){
-        $("#loading").addClass("is-hidden")
+        $("#loading").addClass("is-hidden");
+        unlockBody();
     });
 }
 
 function onClickEditButton(e){
     e.preventDefault();
     var id = $(this).data("user-id");
+    lockBody();
     $("#loading").removeClass("is-hidden");
 
     $.ajax("/api/users/"+id)
@@ -70,8 +77,9 @@ function onClickEditButton(e){
         $("#loading").addClass("is-hidden");
         $("#edit-lightbox").removeClass("is-hidden");
     }).catch(function(err){
-        console.error(err)
-        $("#loading").addClass("is-hidden")
+        console.error(err);
+        $("#loading").addClass("is-hidden");
+        unlockBody();
     });
 }
 
@@ -88,14 +96,24 @@ function onSubmitEditUser(e){
         contentType: "application/x-www-form-urlencoded"})
     .then(function(data){
         refreshUsers(function(){
-            $("#loading").addClass("is-hidden")
+            $("#loading").addClass("is-hidden");
+            unlockBody();
         })
     }).catch(function(err){
         console.error(err);
-        $("#loading").addClass("is-hidden")
+        $("#loading").addClass("is-hidden");
+        unlockBody();
     });
     $("#edit-lightbox").addClass("is-hidden");
     $("#loading").removeClass("is-hidden");
+}
+
+function lockBody(){
+    $("body").css("overflow","hidden");
+}
+
+function unlockBody(){
+    $("body").css("overflow","auto");
 }
 
 $(function(){
